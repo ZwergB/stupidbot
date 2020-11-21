@@ -1,27 +1,11 @@
-const fetch = require('node-fetch');
+const StudIPInterface = require('./StudIPInterface');
+
 const credentials = require('./config/credentials')
 const serverConfig = require('./config/server.json')
 
+const courseId = '36e93f23b97226d889adb38483b273fa'; // PDA
+// const courseId = '03b1f88b168fd68e9ffd623fa56de58d'; // GTI
+const userId = '31a55b7f15b9d94224c67941f0b5574c';
 
-apiRequest('discovery', credentials)
-
-function apiRequest(path, userAuth = { user, password }) {
-
-    fetch(serverConfig.url + path, {
-        method:'GET',
-        headers: {
-            'Authorization': 'Basic ' + Buffer.from(userAuth.user + ":" + userAuth.password).toString('base64')
-        },
-    })
-    .then(response => response.json())
-    .then((json) => {
-        fs = require('fs');
-        fs.writeFile('result.json', JSON.stringify(json, false, 2), () => {
-    
-        });
-        console.log(json)
-    })
-    .catch((err) => {
-        console.log(error);
-    });
-}
+studIpInterface =  new StudIPInterface(serverConfig.url, credentials)
+studIpInterface.findFileInCourse('.*Zusatzaufgaben.*', courseId)

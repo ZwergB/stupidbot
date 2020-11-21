@@ -1,0 +1,275 @@
+{
+    "/archive": { "get": "Returns all courses contained in archive for a certain institute and\nsemester." },
+    "/archive/:course_id": { "get": "Returns the data for specific course." },
+    "/archive/degrees": {
+        "get": "Returns all degrees contained in archive - optionally limited to a\nsemester and/or subject."
+    },
+    "/archive/institutes": { "get": "Returns all institutes contained in archive - optionally limited to a\nsemester." },
+    "/archive/module_descriptor/:module_id": { "get": "Returns the module descriptor for a certain module." },
+    "/archive/modules": {
+        "get": "Returns all modules contained in archive - optionally limited to a\ncertain semester, subject and/or degree."
+    },
+    "/archive/modules/:module_id": { "get": "Returns a certain module from the archive." },
+    "/archive/search": {
+        "get": "Searches courses in archive. Search by subject, degree, semester,\ninstitute full text needle. Result is paginated in chunks of 20 (or\ndefined by parameter \"limit\"). Use \"offset\" parameter to access\ndifferent pages."
+    },
+    "/archive/semesters": { "get": "Returns all semesters contained in archive." },
+    "/archive/subjects": {
+        "get": "Returns all subjects contained in archive - optionally limited to a\nsemester and/or degree."
+    },
+
+
+    "/blubber/comment/:blubber_id": {
+        "delete": "Deletes the blubber and informs the author of the blubber if\nthe current user is not the author of the blubber.",
+        "get": "Displays all data to a special blubber",
+        "put": "Edits the content of a blubber. Sends a message of the change to the author, if the editing user is not\nthe author of the blubber, to inform him/her about the change.\nIf the content is empty the blubber is going to be deleted, because we don't want empty\nblubber in the system."
+    },
+    "/blubber/posting/:blubber_id": {
+        "delete": "Deletes the blubber and informs the author of the blubber if\nthe current user is not the author of the blubber.",
+        "get": "Displays all data to a special blubber",
+        "put": "Edits the content of a blubber. Sends a message of the change to the author, if the editing user is not\nthe author of the blubber, to inform him/her about the change.\nIf the content is empty the blubber is going to be deleted, because we don't want empty\nblubber in the system."
+    },
+    "/blubber/posting/:blubber_id/comments": {
+        "get": "Returns all comments of the blubber starting with the newest.\nReturns an empty array if blubber_id is from a comment.",
+        "post": "Create a comment to a blubber"
+    },
+    "/blubber/postings": {
+        "post": "Create a new blubber. POST-Parameters are blubbercontent, context_type,\ncourse_id, private_adressees.    Redirects to the new blubber afterwards."
+    },
+    "/blubber/stream/:stream_id": { "get": "List blubber in a custom stream" },
+
+
+    "/campuscard/upload": { "post": null },
+
+
+    "/career-services/application-modes/:id": { "patch": null },
+    "/career-services/application-modes/positions": { "get": null },
+    "/career-services/companies/:company_id/contacts/:contact_id": { "get": null },
+    "/career-services/companies/:id": { "get": null },
+    "/career-services/events": { "get": null },
+    "/career-services/events/:event_id/registrations/:registration_id": { "patch": null },
+    "/career-services/events/:id": { "get": null, "patch": null },
+    "/career-services/events/:id/profiles": { "get": null },
+    "/career-services/events/:id/registrations": { "post": null },
+    "/career-services/fields/:id": { "patch": null },
+    "/career-services/graduate-offers/:id": { "patch": null },
+    "/career-services/graduate-offers/positions": { "get": null },
+    "/career-services/international-offers/:id": { "patch": null },
+    "/career-services/international-offers/positions": { "get": null },
+    "/career-services/student-offers/:id": { "patch": null },
+    "/career-services/student-offers/positions": { "get": null },
+    "/career-services/view-tables/:key": { "put": null },
+
+
+    "/comment/:comment_id": { "delete": "News-Comment löschen", "get": "News-Comment auslesen" },
+
+
+    "/contact_group/:group_id": { "delete": "Remove a contact group", "get": "Show a single contact group" },
+    "/contact_group/:group_id/members": { "get": "List all members of a contact group" },
+    "/contact_group/:group_id/members/:user_id": { "delete": "Remove a user from a contact group", "put": "Add a user to a contact group" },
+
+
+    "/course/:course_id": { "get": "Show a single course" },
+    "/course/:course_id/blubber": {
+        "get": "List blubber in a course",
+        "post": "Create a blubber in a course and redirects to the new blubber-route"
+    },
+    "/course/:course_id/events": { "get": "returns events for a given course" },
+    "/course/:course_id/forum_categories": { "get": "List all categories of a forum", "post": "Create a new category" },
+    "/course/:course_id/members": { "get": "List all members of a course.\nOptionally filtered by a URL parameter 'status'." },
+    "/course/:course_id/news": { "get": "News einer Veranstaltung auslesen", "post": "News anlegen" },
+    "/course/:course_id/top_folder": { "get": "Get the root file folder of a course." },
+    "/course/:course_id/wiki": { "get": "Wikiseitenindex einer Veranstaltung" },
+    "/course/:course_id/wiki/:keyword": { "get": "Wikiseite auslesen", "put": "Wikiseite ändern/hinzufügen" },
+    "/course/:course_id/wiki/:keyword/:version": { "get": "Wikiseite auslesen" },
+    "/courses/:course_id/blogs": { "post": "Creates a blog" },
+    "/courses/:course_id/blogs/:blog_id": { "delete": "Deletes a blog", "patch": "Update a blog" },
+    "/courses/:course_id/blogs/:blog_id/teachers": { "put": "Adds teachers as administrator to a blog." },
+    "/courses/:course_id/blogs/configuration": {
+        "delete": "Deletes a blog configuration for a course",
+        "put": "Stores the blog configuration for a course.\n\nPass the request parameter \"auto\" with a non-false value to\nretrieve the configuration from the blog connections. This should\nbe used _after_ all blogs were created. If it is called this way\n_before_ the blogs are created, the according settings cannot be\nread from stud.ip data. This should be clear but sometimes it's\nbetter to note things explicitely. You will still need to pass the\n\"connect_*\"/\"allow_collaboration\" fields since they cannot be\nderived from data in stud.ip."
+    },
+
+
+    "/discovery": { "get": "Schnittstellenbeschreibung" },
+
+
+    "/file/:file_ref_id": {
+        "delete": "Deletes a file reference.",
+        "get": "Get a file reference object (metadata)",
+        "put": "Edit a file reference."
+    },
+    "/file/:file_ref_id/copy/:destination_folder_id": { "post": "Copies a file reference." },
+    "/file/:file_ref_id/download": { "get": "Get the data of a file by the ID of an associated FileRef object" },
+    "/file/:file_ref_id/move/:destination_folder_id": { "post": "Moves a file reference." },
+    "/file/:file_ref_id/update": { "post": "Update file data using a FileReference to it." },
+
+
+    "/folder/:folder_id": {
+        "delete": "Deletes a folder.",
+        "get": "Get a folder object with its file references, subdirectories and the permissions for the user who has made the API call.",
+        "put": "Allows editing the name or the description (or both) of a folder."
+    },
+    "/folder/:folder_id/copy/:destination_folder_id": { "post": "Copies a folder into another folder." },
+    "/folder/:folder_id/files": { "get": "Get a list with all FileRef objects of a folder." },
+    "/folder/:folder_id/move/:destination_folder_id": { "post": "Move a folder into another folder." },
+    "/folder/:folder_id/permissions": { "get": "Get a list with permissions the current user has for a folder." },
+    "/folder/:folder_id/subfolders": { "get": "Get a list with all FileRef objects of a folder." },
+    "/folder/:parent_folder_id/new_folder": { "post": "Creates a new folder inside of another folder and returns the new object on success." },
+    "/forum_category/:category_id": { "delete": "Delete a category", "get": "Read a category", "put": "Update a category" },
+    "/forum_category/:category_id/areas": { "get": "Show entries of a category", "post": "Add a new forum entry to an existing one" },
+    "/forum_entry/:entry_id": {
+        "delete": "Delete an entry",
+        "get": "Get a forum entry",
+        "post": "Add a new forum entry to an existing one",
+        "put": "Update an existing one forum entry"
+    },
+
+
+    "/mensa/:from": { "get": null },
+    "/mensa/:from/:until": { "get": null },
+    "/mensa/attributes": { "get": null },
+    "/mensa/locations": { "get": null },
+    "/mensa/settings": { "get": null },
+    "/mensa/today": { "get": null },
+    "/mensa/tomorrow": { "get": null },
+
+
+    "/message/:message_id": {
+        "delete": "Löscht eine Nachricht.",
+        "get": "Liefert die Daten der angegebenen Nachricht zurück.",
+        "put": "Eine Nachricht als (un)gelesen markieren."
+    },
+    "/message/:message_id/file_folder": {
+        "get": "Get the root file folder of a message. The root file folder contains all\nfiles that were appended to the message."
+    },
+    "/messages": { "post": "Schreibt eine neue Nachricht." },
+
+
+    "/news/:news_id": { "delete": "News löschen", "get": "News auslesen", "put": "News updaten" },
+    "/news/:news_id/comments": { "get": "News-Comments auslesen", "post": "News-Comment anlegen" },
+
+
+    "/raumaushang/currentschedule/:resource_id": { "get": "Returns the schedule of a given resource for the current day." },
+    "/raumaushang/query": { "get": "Search for a resource" },
+    "/raumaushang/schedule/:resource_id": { "get": "Returns the schedule of a given resource for a given time range." },
+    "/raumaushang/schedule/:resource_id/:from": { "get": "Returns the schedule of a given resource for a given time range." },
+    "/raumaushang/schedule/:resource_id/:from/:until": { "get": "Returns the schedule of a given resource for a given time range." },
+
+
+    "/schwarzes-brett/article/:id": { "delete": null, "get": null, "patch": null },
+    "/schwarzes-brett/article/:id/visit": { "post": null },
+    "/schwarzes-brett/articles": { "post": null },
+    "/schwarzes-brett/categories": { "get": null },
+
+
+    "/semester/:semester_id": { "get": "Returns a single semester." },
+    "/semesters": { "get": "Returns a list of all semesters." },
+
+
+    "/studip/colors": { "get": "Farbeinstellungen" },
+    "/studip/content_terms_of_use_list": { "get": "Get a collection of all ContentTermsOfUse objects" },
+    "/studip/file_system/folder_types": { "get": "Returns a list of defined folder types, separated by range type." },
+    "/studip/news": { "get": "Globale News auslesen", "post": "News anlegen" },
+    "/studip/settings": { "get": "Grundlegende Systemeinstellungen" },
+
+
+    "/user": { "get": "getUser - retrieves data of a user" },
+    "/user/:user_id": { "get": "getUser - retrieves data of a user" },
+    "/user/:user_id/:box": {
+        "get": "Liefert die vorhandenen Nachrichten des autorisierten Nutzers zurück.",
+        "head": "Liefert die Anzahl der vorhandenen Nachrichten des autorisierten Nutzers\nzurück. Der Parameter bestimmt je nach Wert, auf welchen Bereich\n(Posteingang bzw. Postausgang) zugegriffen werden soll.\nDie Rückgabe beinhaltet jeweils die Anzahl aller Nachrichten sowie die\nAnzahl der ungelesenen Nachrichten."
+    },
+    "/user/:user_id/activitystream": { "get": "List activities for an user" },
+    "/user/:user_id/blubber": {
+        "get": "List blubber in a user's profile",
+        "post": "Create a blubber in a user's profile and redirects to the new blubber-route"
+    },
+    "/user/:user_id/config/:field": {
+        "delete": "Removes a specific config entry for a given user",
+        "get": "Returns the value of a specific config entry for a given user",
+        "put": "Stored the value of a specific config entry for a given user"
+    },
+    "/user/:user_id/contact_groups": { "get": "List all contact groups of a user", "post": "Create a new contact group for a user." },
+    "/user/:user_id/contacts": { "get": "Lists all contacts of a user" },
+    "/user/:user_id/contacts/:friend_id": { "delete": "Deletes a contact", "put": "Adds/Updates a contact to user's list of contacts" },
+    "/user/:user_id/courses": {
+        "get": "Lists all courses of a user including the semesters in which\nthat course is active.\nOptionally filtered by a URL parameter 'semester'."
+    },
+    "/user/:user_id/courses/:course_id": {
+        "patch": "Patches the course member data of a user and course. Pass data to be\npatched via a valid json object in the body. Fields that my be patched:\n\n- group - the associated group in the overview of the users's courses\n- visibility - visible state of the course"
+    },
+    "/user/:user_id/events": { "get": "returns all upcoming events within the next two weeks for a given user" },
+    "/user/:user_id/events.ics": { "get": "returns an iCAL Export of all events for a given user" },
+    "/user/:user_id/institutes": { "get": "returns institutes for a given user" },
+    "/user/:user_id/news": { "get": "News eines Nutzers auslesen", "post": "News anlegen" },
+    "/user/:user_id/schedule": { "get": "returns schedule for a given user and semester" },
+    "/user/:user_id/schedule/:semester_id": { "get": "returns schedule for a given user and semester" },
+    "/user/:user_id/top_folder": { "get": "Get the root file folder of a user's file area." },
+    "/users": { "get": null },
+
+
+    "/zsb/allContacts/:type": { "get": null },
+    "/zsb/combinations/:profile_id": { "get": null },
+    "/zsb/contacts": { "get": null },
+    "/zsb/contacts/:profile_id": { "get": null },
+    "/zsb/contacts/:profile_id/:types": { "get": null },
+    "/zsb/contacts/types": { "get": null },
+    "/zsb/course/:course_id": { "get": null },
+    "/zsb/degrees": { "get": null },
+    "/zsb/documents": { "get": "Returns document data for a list of file ids or the search result for\na given needle." },
+    "/zsb/documents/:profile_id": { "get": null },
+    "/zsb/facts/:profile_id": { "get": null },
+    "/zsb/facts/:profile_id/:language": { "get": null },
+    "/zsb/faculties": { "get": "Returns a list of all faculties (optionally with all associated\ninstitutes)." },
+    "/zsb/files/:profile_id": {
+        "get": "Get all files for a certain profile (optionally limited by a comma\nseparated list of types)."
+    },
+    "/zsb/files/:profile_id/:types": {
+        "get": "Get all files for a certain profile (optionally limited by a comma\nseparated list of types)."
+    },
+    "/zsb/files/types": { "get": "Returns all file types." },
+    "/zsb/fristen/:profile_id": { "get": null },
+    "/zsb/fristenByDegree/:degree_id/:de_eu/:hoeher": { "get": null },
+    "/zsb/hit/:semester_id": { "get": null },
+    "/zsb/hit/semesters": { "get": null },
+    "/zsb/institute/:institute_id": { "get": "Returns the data of a specific institute." },
+    "/zsb/instituteGroups/:institute_id": { "get": "Returns the groups of an institute." },
+    "/zsb/institutes": { "get": "Returns a list of all institutes (of a specific faculty)." },
+    "/zsb/institutes/:faculty_id": { "get": "Returns a list of all institutes (of a specific faculty)." },
+    "/zsb/lehramt": { "get": null },
+    "/zsb/profile/:profile_id": { "get": "Returns the profile of a study course." },
+    "/zsb/profile/:profile_id/:language": { "get": "Returns the profile of a study course." },
+    "/zsb/profile/:profile_id/:language/:length": { "get": "Returns the profile of a study course." },
+    "/zsb/schnupper": { "get": "Returns schnupper studium relevant (for a specific semester)." },
+    "/zsb/schnupper/:semester_id": { "get": "Returns schnupper studium relevant (for a specific semester)." },
+    "/zsb/statistics/configurations": { "get": null, "post": null },
+    "/zsb/statistics/configurations/:config_id/answers/:answer_id": { "delete": null, "get": null },
+    "/zsb/statistics/configurations/:configuration_id": { "delete": null, "get": null, "patch": null, "put": null },
+    "/zsb/statistics/configurations/:configuration_id/answers": { "get": null, "post": null },
+    "/zsb/statistics/configurations/:configuration_id/answers/:answer_id": { "put": null },
+    "/zsb/statistics/configurations/:configuration_id/evaluation/:semester_id": { "get": null },
+    "/zsb/statistics/configurations/:configuration_id/evaluation/:semester_id/:question_id": { "get": null },
+    "/zsb/statistics/configurations/:configuration_id/evaluation/:semester_id/month/:month": { "get": null },
+    "/zsb/statistics/configurations/:configuration_id/evaluation/:semester_id/month/:month/:question_id_x": { "get": null },
+    "/zsb/statistics/configurations/:configuration_id/evaluation/:semester_id/month/:month/:question_id_x/:question_id_y": { "get": null },
+    "/zsb/statistics/configurations/:configuration_id/users/:user_id": { "delete": null, "put": null },
+    "/zsb/statistics/question_types": { "get": null },
+    "/zsb/statistics/questions/:question_id": { "delete": null },
+    "/zsb/statistics/users": { "get": null },
+    "/zsb/study_paths": { "get": null },
+    "/zsb/study_paths/:degree": { "get": null },
+    "/zsb/study_paths_by_admission_type/:type": { "get": null },
+    "/zsb/teachersByInstitute/:institute_id": { "get": "Returns a list of all teachers of an institute." },
+    "/zsb/teachersByLetter": {
+        "get": "Returns either a list of the letters teachers' last names begin with or\nall teachers beginning with a specific letter."
+    },
+    "/zsb/teachersByLetter/:letter": {
+        "get": "Returns either a list of the letters teachers' last names begin with or\nall teachers beginning with a specific letter."
+    },
+    "/zsb/texts/:profile_id/:language/:start": { "get": null },
+    "/zsb/texts/:profile_id/:language/:start/:type": { "get": null },
+    "/zsb/texts/:profile_id/:language/:start/:type/:force_type": { "get": null },
+    "/zsb/userByUsername/:username": { "get": null },
+    "/zsb/users/:user_id/courses": { "get": "Lists all courses of a specific user where he/she is teacher (for a given\nsemester)." }
+}
