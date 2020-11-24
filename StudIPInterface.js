@@ -16,7 +16,7 @@ class StudIPInterface {
 
         if (!this.foundFiles) return;
 
-        const newFiles = this.testForNewFiles(this.fileList);
+        const newFiles = this.testForNewFiles(this.foundFiles);
        
         for (const file of newFiles) {
             const data = await this.apiRequest('/file/' + file.id + '/download', 'file');
@@ -42,7 +42,7 @@ class StudIPInterface {
         const hashFile = JSON.parse(fs.readFileSync(hashFilePath));
         console.log(hashFile);
 
-        return [];
+        return fileList;
     }
 
     async findFilesInCourse(fileName, courseId) {
