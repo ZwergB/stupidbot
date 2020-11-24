@@ -1,6 +1,5 @@
 const fetch = require('node-fetch');
 const fs = require('fs');
-const crypto = require('crypto');
 
 class StudIPInterface {
 
@@ -11,6 +10,10 @@ class StudIPInterface {
         this.foundFiles = null;
         this.hashFile = 'hashFile.json';
         this.downloadPrefix = 'files/';
+
+        if (!fs.existsSync(this.downloadPrefix)) {
+            fs.mkdirSync(this.downloadPrefix);
+        }            
     }
 
     async downloadFoundFiles() {
@@ -21,7 +24,7 @@ class StudIPInterface {
         console.info('Downloading ' + newFiles.length + ' new files.')
 
         const paths = [];
-       
+      
         for (const file of newFiles) {
 
             if (!fs.existsSync(this.downloadPrefix + file.folder_id)) {
