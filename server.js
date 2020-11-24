@@ -25,11 +25,18 @@ async function testCycle() {
     for (const channel of channels) {
         const course = courses.find((course) => course.name == channel.name);
 
-        await studIpInterface.findFilesInCourse(course.prefix, course.id);
-        const newFilePaths = await studIpInterface.downloadFoundFiles();
+        if (course) {
+            console.info('####################');
+            console.info(course.name);
 
-        for (const filePath of newFilePaths) {
-            discordBot.uploadFile(filePath, channel.id); 
+            await studIpInterface.findFilesInCourse(course.prefix, course.id);
+            const newFilePaths = await studIpInterface.downloadFoundFiles();
+
+            for (const filePath of newFilePaths) {
+                discordBot.uploadFile(filePath, channel.id); 
+            }
+        } else {
+            console.error('Channel ' + channel.name + ' ist mit keinem Kurs verknüpft!')
         }
     }
 

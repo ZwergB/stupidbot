@@ -66,7 +66,7 @@ class StudIPInterface {
         const res = await this.apiRequest('course/' + courseId + '/top_folder');
         let allFiles = await this.getAllFilesInFolder(res.id, true);
 
-        let re =  new RegExp(fileName, 'g');
+        let re =  new RegExp(fileName, '');
         this.foundFiles = allFiles.filter((file) => {
             return re.test(file.name);
         })
