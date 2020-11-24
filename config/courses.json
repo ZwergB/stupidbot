@@ -1,0 +1,27 @@
+{
+    "courses":[{
+        "name":"PDA",
+        "id":"36e93f23b97226d889adb38483b273fa",
+        "prefix":"Übungsblatt"
+    },
+    {
+        "name":"GTI",
+        "id":"03b1f88b168fd68e9ffd623fa56de58d",
+        "prefix":"uebung"
+    },
+    {
+        "name":"ANA",
+        "id":"7e2fc76d0c979da301d8c0df5017926a",
+        "prefix":"Uebungsblatt"
+    },
+    {
+        "name":"MPB",
+        "id":"2aa6a188c90ecffcf47f7e8139b3fb11",
+        "prefix":"mpb-ue"
+    },
+    {
+        "name":"DS",
+        "id":"4f3aef9dacdc3f883ce9d49b3d5512f3",
+        "prefix":"ds-2020-ha"
+    }]    
+}
