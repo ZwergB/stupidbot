@@ -19,23 +19,29 @@ class StudIPInterface {
 
         const newFiles = this.testForNewFiles(this.foundFiles);
         console.info('Downloading ' + newFiles.length + ' new files.')
+
+        const paths = [];
        
         for (const file of newFiles) {
 
             if (!fs.existsSync(this.downloadPrefix + file.folder_id)) {
                 fs.mkdirSync(this.downloadPrefix + file.folder_id);
             }
-
+            
             const data = await this.apiRequest('/file/' + file.id + '/download', 'file');
             let buffer = Buffer.from(data);
-            fs.writeFile(this.downloadPrefix + file.folder_id + '/' + file.name, buffer, "binary",  () => {});
+
+            const path = this.downloadPrefix + file.folder_id + '/' + file.name
+            fs.writeFile(path, buffer, "binary",  () => {});
+            paths.push(path)
         }
 
         this.foundFiles = null;
+
+        return paths;
     }
 
     testForNewFiles(fileList) { 
-
 
         try {
             const info = fs.statSync(this.hashFile)
