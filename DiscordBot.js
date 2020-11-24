@@ -18,12 +18,11 @@ class DiscordBot {
             let prefix = "§";
             let channelFilePath = "config/discordchannels.json";
 
-            if (msg.content === prefix + 'ping') {
-                msg.reply('Pong!');
-            }
-
             if (msg.content.startsWith(prefix)) {
                 switch(true) {
+                    case msg.content.startsWith(prefix + "ping"):
+                        msg.reply('Pong!');
+                        break; 
                     case msg.content.startsWith(prefix + "refresh"):
                         console.log("Testcycle started manually!")
                         msg.reply("Testcycle started manually!");
