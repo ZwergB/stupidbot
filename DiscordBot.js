@@ -7,7 +7,7 @@ class DiscordBot {
         this.client = new Discord.Client();
     }
 
-    async startBot() {
+    async startBot(testCycle) {
         this.client.once('ready', () => {
             console.log('Stupid Bot is online');
         });
@@ -15,6 +15,16 @@ class DiscordBot {
         this.client.on('message', msg => {
             if (msg.content === 'ping') {
             msg.reply('Pong!');
+            }
+
+            let prefix = "§";
+
+            if (msg.content.startsWith(prefix)) {
+                switch(true) {
+                    case msg.content.startsWith(prefix + "refresh"):
+                        testCycle();
+                        break;
+                }
             }
         });
 

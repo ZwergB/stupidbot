@@ -13,7 +13,7 @@ discordBot      = new DiscordBot(botConfig);
 studIpInterface =  new StudIPInterface(serverConfig.url, credentials);
 
 (async function() {
-    await discordBot.startBot()
+    await discordBot.startBot(testCycle)
 
     testCycle();
     setInterval(testCycle, 600000);
