@@ -1,4 +1,5 @@
 const Discord = require('discord.js')
+const fs = require('fs');
 
 class DiscordBot {
 
@@ -37,11 +38,16 @@ class DiscordBot {
         });
     }
 
-    async uploadFile(path, channelID) {
-        const attachment = new Discord.MessageAttachment(path);
-        this.client.channels.cache.get(channelID).send(attachment);
-    }
+    uploadFile(path, channelID) {
 
+        if (fs.statSync(path).size < 800000) {
+            const attachment = new Discord.MessageAttachment(path);
+            this.client.channels.cache.get(channelID).send(attachment);
+        } else {
+            // Find some way to link to the file or create a dynamic link to the file
+        }
+
+    }
 }
 
 module.exports = DiscordBot;

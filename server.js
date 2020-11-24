@@ -1,16 +1,16 @@
 const StudIPInterface = require('./StudIPInterface');
-const DiscordBot = require('./DiscordBot');
+const DiscordBot      = require('./DiscordBot');
 
-const credentials = require('./config/credentials')
 const serverConfig = require('./config/server.json')
-const botConfig = require('./config/botconfig')
+const botConfig    = require('./config/botconfig')
 
-const courseId = '36e93f23b97226d889adb38483b273fa'; // PDA
-// const courseId = '03b1f88b168fd68e9ffd623fa56de58d'; // GTI
-const userId = '31a55b7f15b9d94224c67941f0b5574c';
+const credentials  = require('./config/credentials')
+
+const channels = require('./config/channels.json').channels;
+const courses  = require('./config/courses.json').courses;
 
 discordBot      = new DiscordBot(botConfig);
-studIpInterface =  new StudIPInterface(serverConfig.url, credentials);
+studIpInterface = new StudIPInterface(serverConfig.url, credentials);
 
 (async function() {
     await discordBot.startBot(testCycle)
@@ -21,12 +21,17 @@ studIpInterface =  new StudIPInterface(serverConfig.url, credentials);
 
 async function testCycle() {
     console.info('Testcycle started!');
+    
+    for (const channel of channels) {
+        const course = courses.find((course) => course.name == channel.name);
 
-    await studIpInterface.findFilesInCourse('.*Zusatzauf.*', courseId);
-    const newFilePaths = await studIpInterface.downloadFoundFiles();
-    console.log(newFilePaths);
+        await studIpInterface.findFilesInCourse(course.prefix, course.id);
+        const newFilePaths = await studIpInterface.downloadFoundFiles();
 
-    discordBot.uploadFile(newFilePaths[2], "780082677902344226");
+        for (const filePath of newFilePaths) {
+            discordBot.uploadFile(filePath, channel.id); 
+        }
+    }
 
     console.info('Testcycle ended!')
 }
