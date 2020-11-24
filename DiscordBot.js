@@ -20,8 +20,16 @@ class DiscordBot {
 
             if (msg.content.startsWith(prefix)) {
                 switch(true) {
+                    case msg.content.startsWith(prefix + "help"):
+                        msg.reply("List of commands: \n" +
+                            "§ping -> should send back a Pong! \n" +
+                            "§refresh -> forces the bot to refresh his files \n" +
+                            "§addChannel name id/this -> adds a channel to send into"
+                        );
+                        break; 
                     case msg.content.startsWith(prefix + "ping"):
                         msg.reply('Pong!');
+                        console.log("Pong!");
                         break; 
                     case msg.content.startsWith(prefix + "refresh"):
                         console.log("Testcycle started manually!")
