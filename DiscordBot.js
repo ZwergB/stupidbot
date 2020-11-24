@@ -14,16 +14,45 @@ class DiscordBot {
         });
     
         this.client.on('message', msg => {
-            if (msg.content === 'ping') {
-            msg.reply('Pong!');
-            }
 
             let prefix = "§";
+            let channelFilePath = "config/discordchannels.json";
 
             if (msg.content.startsWith(prefix)) {
                 switch(true) {
+                    case msg.content.startsWith(prefix + "help"):
+                        msg.reply("List of commands: \n" +
+                            "§ping -> should send back a Pong! \n" +
+                            "§refresh -> forces the bot to refresh his files \n" +
+                            "§addChannel name id/this -> adds a channel to send into"
+                        );
+                        break; 
+                    case msg.content.startsWith(prefix + "ping"):
+                        msg.reply('Pong!');
+                        console.log("Pong!");
+                        break; 
                     case msg.content.startsWith(prefix + "refresh"):
+                        console.log("Testcycle started manually!")
+                        msg.reply("Testcycle started manually!");
                         testCycle();
+                        break;
+                    case msg.content.startsWith(prefix + "addChannel"):
+                        let content = msg.content.split(" "); //split in arguments
+                        if (content.length == 3) {
+                            //Get the Channel ID if it should be the one the message was sent in.
+                            if (content[2] == "this") {
+                                content[2] = msg.channel.id;
+                            }
+                            
+                            //Adding the Channel to JSON File
+                            const channelFile = JSON.parse(fs.readFileSync(channelFilePath));
+                            channelFile['channels'].push({"name":content[1],"id":content[2]});
+                            console.log(channelFile);
+                            fs.writeFileSync(channelFilePath, JSON.stringify(channelFile, false, 2))
+
+                            msg.reply("Added Channel " + content[2] + " as " + content[1]);
+                            console.log("Added Channel " + content[2] + " as " + content[1]);
+                        }
                         break;
                 }
             }
