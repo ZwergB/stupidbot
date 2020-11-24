@@ -10,6 +10,7 @@ class StudIPInterface {
 
         this.foundFiles = null;
         this.hashFile = 'hashFile.json';
+        this.downloadPrefix = 'files/';
     }
 
     async downloadFoundFiles() {
@@ -17,11 +18,17 @@ class StudIPInterface {
         if (!this.foundFiles) return;
 
         const newFiles = this.testForNewFiles(this.foundFiles);
+        console.info('Downloading ' + newFiles.length + ' new files.')
        
         for (const file of newFiles) {
+
+            if (!fs.existsSync(this.downloadPrefix + file.folder_id)) {
+                fs.mkdirSync(this.downloadPrefix + file.folder_id);
+            }
+
             const data = await this.apiRequest('/file/' + file.id + '/download', 'file');
             let buffer = Buffer.from(data);
-            fs.writeFile(file.name, buffer, "binary",  () => {});
+            fs.writeFile(this.downloadPrefix + file.folder_id + '/' + file.name, buffer, "binary",  () => {});
         }
 
         this.foundFiles = null;
@@ -29,19 +36,19 @@ class StudIPInterface {
 
     testForNewFiles(fileList) { 
 
-        const hashFilePath = 'hashFile.json';
 
         try {
-            const info = fs.statSync(hashFilePath)
+            const info = fs.statSync(this.hashFile)
             console.log('hashfile exists')
         } catch {
             console.log('hashfile does not exists')
             return [];
         }
+        const hashFile = JSON.parse(fs.readFileSync(this.hashFile));
 
-        const hashFile = JSON.parse(fs.readFileSync(hashFilePath));
-        console.log(hashFile);
-
+        fileList = fileList.filter((file) => !hashFile.hashes.find((val) => val == file.file_id));
+        fileList.map((file) => {hashFile.hashes.push(file.file_id)})
+        fs.writeFileSync(this.hashFile, JSON.stringify(hashFile, false, 2))
         return fileList;
     }
 
@@ -66,7 +73,7 @@ class StudIPInterface {
         for (const file in files.collection)
             allFiles.push(files.collection[file]);
 
-        console.log('Found ' + allFiles.length + ' file/s!')
+        console.info('Found ' + allFiles.length + ' file/s!')
 
         if (recursive) {
             const res = await this.getAllFoldersInFolder(folderId);
