@@ -1,30 +1,61 @@
 const fetch = require('node-fetch');
 const fs = require('fs');
+const crypto = require('crypto');
 
 class StudIPInterface {
 
     constructor(apiURL, userData = {name, password}) {
         this.url = apiURL;
         this.userData = userData;
+
+        this.foundFiles = null;
+        this.hashFile = 'hashFile.json';
     }
 
-    async findFileInCourse(fileName, courseId) {
+    async downloadFoundFiles() {
+
+        if (!this.foundFiles) return;
+
+        const newFiles = this.testForNewFiles(this.fileList);
+       
+        for (const file of newFiles) {
+            const data = await this.apiRequest('/file/' + file.id + '/download', 'file');
+            let buffer = Buffer.from(data);
+            fs.writeFile(file.name, buffer, "binary",  () => {});
+        }
+
+        this.foundFiles = null;
+    }
+
+    testForNewFiles(fileList) { 
+
+        const hashFilePath = 'hashFile.json';
+
+        try {
+            const info = fs.statSync(hashFilePath)
+            console.log('hashfile exists')
+        } catch {
+            console.log('hashfile does not exists')
+            return [];
+        }
+
+        const hashFile = JSON.parse(fs.readFileSync(hashFilePath));
+        console.log(hashFile);
+
+        return [];
+    }
+
+    async findFilesInCourse(fileName, courseId) {
         
         const res = await this.apiRequest('course/' + courseId + '/top_folder');
         let allFiles = await this.getAllFilesInFolder(res.id, true);
 
         let re =  new RegExp(fileName, 'g');
-        allFiles = allFiles.filter((file) => {
+        this.foundFiles = allFiles.filter((file) => {
             return re.test(file.name);
         })
 
-        for (const file of allFiles) {
-            const data = await this.apiRequest('/file/' + file.id + '/download', 'file');
-            const buff = new Uint8Array(data['Symbol(buffer)']());
-            const curFile = fs.writeFile(file.name, buff, () => {});
-        }
-
-        fs.writeFileSync('result.json', JSON.stringify(allFiles, false, 2));
+        return allFiles;
     }
 
     async getAllFilesInFolder(folderId, recursive = false) {
@@ -67,7 +98,7 @@ class StudIPInterface {
                 response = await response.text(); 
             break;      
             case 'file':
-                response = await response.blob();
+                response = await response.arrayBuffer();
             break;
             default:
                 response = await response.json(); 
