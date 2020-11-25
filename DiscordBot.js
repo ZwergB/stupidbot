@@ -34,7 +34,7 @@ class DiscordBot {
                         msg.reply('Pong!');
                         break; 
                     case msg.content.startsWith(prefix + "refresh"):
-                        console.log("Testcycle started manually!")
+                        console.log("Testcycle started manually!");
                         msg.reply("Testcycle started manually!");
                         testCycle();
                         break;
@@ -48,17 +48,17 @@ class DiscordBot {
                             //Adding the Channel to JSON File
                             const channelFile = JSON.parse(fs.readFileSync(channelFilePath));
                             channelFile['channels'].push({"name":content[1],"id":content[2]});
-                            fs.writeFileSync(channelFilePath, JSON.stringify(channelFile, false, 2))
+                            fs.writeFileSync(channelFilePath, JSON.stringify(channelFile, false, 2));
 
                             msg.reply("Added Channel " + content[2] + " as " + content[1]);
                             console.log("Added Channel " + content[2] + " as " + content[1]);
                         }
                         break;
-                    case msg.content.startsWith(prefix + "resend"): //WORK IN PROGRESS
+                    case msg.content.startsWith(prefix + "resend") && false: //WORK IN PROGRESS remove false to enable
                         const hashFile = JSON.parse(fs.readFileSync("hashFile.json"));
                         for (const hash of hashFile.hashes) {
                             if (hash['path'].endsWith(content[1])) {
-                                this.uploadFile(hash['path'], msg.channel.id)
+                                this.uploadFile(hash['path'], msg.channel.id);
                             }
                             msg.delete();
                         }
@@ -77,9 +77,9 @@ class DiscordBot {
     }
 
     botLog(msg) {
-        console.log("Command by " + msg.author + ": \'" + msg.content + "\'");
+        console.log("Command by " + msg.author.username + " (" + msg.author + "): " + msg.content);
     }
-    
+
     uploadFile(path, channelID, text = "") {
 
         if (fs.statSync(path).size < 800000) {
@@ -87,6 +87,11 @@ class DiscordBot {
             this.client.channels.cache.get(channelID).send(text, attachment);
         } else {
             // Find some way to link to the file or create a dynamic link to the file
+            //https://elearning.uni-oldenburg.de/sendfile.php?force_download=1&type=0&file_id=c44f5355cca9068aad60edb9856009fd&file_name=ds-2020-ha06.pdf
+
+            //let url = "https://elearning.uni-oldenburg.de/sendfile.php?force_download=1&type=0&file_id=" + "&file_name="; //hashfile?
+
+            //this.sendMessage(url, channelID);
         }
 
     }
