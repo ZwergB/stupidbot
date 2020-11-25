@@ -25,7 +25,7 @@ class DiscordBot {
                             "§ping -> should send back a Pong! \n" +
                             "§refresh -> forces the bot to refresh his files \n" +
                             "§addChannel name id/this -> adds a channel to send into \n" +
-                            "§resend filename -> sends the file again"
+                            "§resend filename -> sends the file again !work in progress!"
                         );
                         break; 
                     case msg.content.startsWith(prefix + "ping"):
@@ -55,7 +55,7 @@ class DiscordBot {
                             console.log("Added Channel " + content[2] + " as " + content[1]);
                         }
                         break;
-                    case msg.content.startsWith(prefix + "resend"):
+                    case msg.content.startsWith(prefix + "resend"): //WORK IN PROGRESS
                         let content = msg.content.split(" "); //split in arguments
                         const hashFile = JSON.parse(fs.readFileSync("hashFile.json"));
                         for (const hash of hashFile.hashes) {
