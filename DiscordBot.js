@@ -24,7 +24,8 @@ class DiscordBot {
                         msg.reply("List of commands: \n" +
                             "§ping -> should send back a Pong! \n" +
                             "§refresh -> forces the bot to refresh his files \n" +
-                            "§addChannel name id/this -> adds a channel to send into"
+                            "§addChannel name id/this -> adds a channel to send into \n" +
+                            "§reSend filename -> sends the file again"
                         );
                         break; 
                     case msg.content.startsWith(prefix + "ping"):
@@ -54,6 +55,16 @@ class DiscordBot {
                             console.log("Added Channel " + content[2] + " as " + content[1]);
                         }
                         break;
+                    case msg.content.startsWith(prefix + "reSend"):
+                        let content = msg.content.split(" "); //split in arguments
+                        const hashFile = JSON.parse(fs.readFileSync("hashFile.json"));
+                        for (const hash of hashFile.hashes) {
+                            if (hash['path'].endsWith(content[1])) {
+                                this.uploadFile(hash['path'], msg.channel.id)
+                            }
+                            msg.delete();
+                        }
+                        break; 
                 }
             }
         });
