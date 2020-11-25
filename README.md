@@ -4,9 +4,9 @@ A bot which uses the StudIp Api to download some stuff and more
 
 ## todo 
 [] Add error message if credentials are wrong  
-[] Add some kind of loggin function  
-[] Push anouncments from courses to Discord  
-[] Delet whitboards  
+[] Add some kind of logging function  
+[] Push announcements from courses to Discord  
+[] Delete whitboards  
 
 ## config
 Edit the <code>config/botconfig.json</code> and add your Discordbot token  
