@@ -67,15 +67,19 @@ class DiscordBot {
         });
     }
 
-    uploadFile(path, channelID) {
+    uploadFile(path, channelID, text = "") {
 
         if (fs.statSync(path).size < 800000) {
             const attachment = new Discord.MessageAttachment(path);
-            this.client.channels.cache.get(channelID).send(attachment);
+            this.client.channels.cache.get(channelID).send(text, attachment);
         } else {
             // Find some way to link to the file or create a dynamic link to the file
         }
 
+    }
+
+    sendMessage(content, channelID) {
+        this.client.channels.cache.get(channelID).send(content);
     }
 }
 
