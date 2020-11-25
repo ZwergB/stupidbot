@@ -25,7 +25,7 @@ class DiscordBot {
                             "§ping -> should send back a Pong! \n" +
                             "§refresh -> forces the bot to refresh his files \n" +
                             "§addChannel name id/this -> adds a channel to send into \n" +
-                            "§reSend filename -> sends the file again"
+                            "§resend filename -> sends the file again"
                         );
                         break; 
                     case msg.content.startsWith(prefix + "ping"):
@@ -55,7 +55,7 @@ class DiscordBot {
                             console.log("Added Channel " + content[2] + " as " + content[1]);
                         }
                         break;
-                    case msg.content.startsWith(prefix + "reSend"):
+                    case msg.content.startsWith(prefix + "resend"):
                         let content = msg.content.split(" "); //split in arguments
                         const hashFile = JSON.parse(fs.readFileSync("hashFile.json"));
                         for (const hash of hashFile.hashes) {
@@ -91,6 +91,15 @@ class DiscordBot {
 
     sendMessage(content, channelID) {
         this.client.channels.cache.get(channelID).send(content);
+    }
+
+    sendAannouncement(title, content) {
+        const embed = new Discord.MessageEmbed()
+            .setColor('#0099ff')
+            .setTitle(title)
+            .setDescription(content);
+
+        this.client.channels.cache.get(channelID).send(embed);
     }
 }
 
