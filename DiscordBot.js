@@ -1,4 +1,4 @@
-const Discord = require('discord.js')
+const Discord = require('discord.js');
 const fs = require('fs');
 
 class DiscordBot {
@@ -19,6 +19,8 @@ class DiscordBot {
             let channelFilePath = "config/discordchannels.json";
 
             if (msg.content.startsWith(prefix)) {
+                this.botLog(msg);
+                let content = msg.content.split(" "); //split in arguments
                 switch(true) {
                     case msg.content.startsWith(prefix + "help"):
                         msg.reply("List of commands: \n" +
@@ -30,7 +32,6 @@ class DiscordBot {
                         break; 
                     case msg.content.startsWith(prefix + "ping"):
                         msg.reply('Pong!');
-                        console.log("Pong!");
                         break; 
                     case msg.content.startsWith(prefix + "refresh"):
                         console.log("Testcycle started manually!")
@@ -38,7 +39,6 @@ class DiscordBot {
                         testCycle();
                         break;
                     case msg.content.startsWith(prefix + "addChannel"):
-                        let content = msg.content.split(" "); //split in arguments
                         if (content.length == 3) {
                             //Get the Channel ID if it should be the one the message was sent in.
                             if (content[2] == "this") {
@@ -48,7 +48,6 @@ class DiscordBot {
                             //Adding the Channel to JSON File
                             const channelFile = JSON.parse(fs.readFileSync(channelFilePath));
                             channelFile['channels'].push({"name":content[1],"id":content[2]});
-                            console.log(channelFile);
                             fs.writeFileSync(channelFilePath, JSON.stringify(channelFile, false, 2))
 
                             msg.reply("Added Channel " + content[2] + " as " + content[1]);
@@ -56,7 +55,6 @@ class DiscordBot {
                         }
                         break;
                     case msg.content.startsWith(prefix + "resend"): //WORK IN PROGRESS
-                        let content = msg.content.split(" "); //split in arguments
                         const hashFile = JSON.parse(fs.readFileSync("hashFile.json"));
                         for (const hash of hashFile.hashes) {
                             if (hash['path'].endsWith(content[1])) {
@@ -78,6 +76,10 @@ class DiscordBot {
         });
     }
 
+    botLog(msg) {
+        console.log("Command by " + msg.author + ": \'" + msg.content + "\'");
+    }
+    
     uploadFile(path, channelID, text = "") {
 
         if (fs.statSync(path).size < 800000) {
@@ -93,7 +95,7 @@ class DiscordBot {
         this.client.channels.cache.get(channelID).send(content);
     }
 
-    sendAannouncement(title, content) {
+    sendAnnouncement(title, content) {
         const embed = new Discord.MessageEmbed()
             .setColor('#0099ff')
             .setTitle(title)
