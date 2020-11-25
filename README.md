@@ -7,6 +7,7 @@ A bot which uses the StudIp Api to download some stuff and more
 [] Add some kind of logging function  
 [] Push announcements from courses to Discord  
 [] Delete whiteboards  
+[] Add filenames to hashfile (or some kind of identification)
 
 ## config
 Edit the <code>config/botconfig.json</code> and add your Discordbot token  
