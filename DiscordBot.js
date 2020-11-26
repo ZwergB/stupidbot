@@ -15,19 +15,24 @@ class DiscordBot {
     
         this.client.on('message', msg => {
 
-            let prefix = "§";
-            let channelFilePath = "config/discordchannels.json";
+            let prefix = "$";
+            let channelFilePath = "config/channels.json";
+            const channelFile= JSON.parse(fs.readFileSync(channelFilePath));
 
             if (msg.content.startsWith(prefix)) {
                 this.botLog(msg);
                 let content = msg.content.split(" "); //split in arguments
                 switch(true) {
-                    case msg.content.startsWith(prefix + "help"):
+                    case msg.content.startsWith(prefix + "help") || msg.content == prefix:
                         msg.reply("List of commands: \n" +
                             "§ping -> should send back a Pong! \n" +
                             "§refresh -> forces the bot to refresh his files \n" +
-                            "§addChannel name id/this -> adds a channel to send into \n" +
-                            "§resend filename -> sends the file again !work in progress!"
+                            "Channel Commands: \n" +
+                            "§listChannels -> lists all channels \n" +
+                            "§addChannel name id/this -> adds given channel \n" +
+                            "§rmChannel id/this -> removes given channel \n" +
+                            "File Commands: \n" +
+                            "§resend filename -> sends the file again !work in progress! \n"
                         );
                         break; 
                     case msg.content.startsWith(prefix + "ping"):
@@ -38,22 +43,51 @@ class DiscordBot {
                         msg.reply("Testcycle started manually!");
                         testCycle();
                         break;
-                    case msg.content.startsWith(prefix + "addChannel"):
-                        if (content.length == 3) {
+
+                        //Channels
+                    case msg.content.startsWith(prefix + "listChannels") || msg.content.startsWith(prefix + "lsc"):
+
+                        let listString = "List of all channels: \n";
+                        for (const channel of channelFile.channels) {
+                            listString += "Name: " + channel.name + " ID: " + channel.id + "\n";
+                        }
+
+                        msg.reply(listString);
+                        break;
+                    case msg.content.startsWith(prefix + "addChannel") || msg.content.startsWith(prefix + "ac"):
                             //Get the Channel ID if it should be the one the message was sent in.
                             if (content[2] == "this") {
                                 content[2] = msg.channel.id;
                             }
                             
                             //Adding the Channel to JSON File
-                            const channelFile = JSON.parse(fs.readFileSync(channelFilePath));
                             channelFile['channels'].push({"name":content[1],"id":content[2]});
                             fs.writeFileSync(channelFilePath, JSON.stringify(channelFile, false, 2));
 
                             msg.reply("Added Channel " + content[2] + " as " + content[1]);
                             console.log("Added Channel " + content[2] + " as " + content[1]);
-                        }
                         break;
+                    case msg.content.startsWith(prefix + "rmChannel") || msg.content.startsWith(prefix + "rmc"):
+                            //Get the Channel ID if it should be the one the message was sent in.
+                            if (content[1] == "this") {
+                                content[1] = msg.channel.id;
+                            }
+                            
+                            //Searching and Removing the Channel in the JSON File
+                            for (let i = 0; i < channelFile.channels.length; i++) {
+                                if(channelFile.channels[i].id == content[1]) {
+                                    content.push(channelFile.channels[i].name);
+                                    channelFile.channels.splice(i, 1);
+                                    break;
+                                }
+                            }
+                            fs.writeFileSync(channelFilePath, JSON.stringify(channelFile, false, 2));
+
+                            msg.reply("Removed Channel " + content[1] + " as " + content[2]);
+                            console.log("Removed Channel " + content[1] + " as " + content[2]);
+                        break;
+
+                        //Files
                     case msg.content.startsWith(prefix + "resend") && false: //WORK IN PROGRESS remove false to enable
                         const hashFile = JSON.parse(fs.readFileSync("hashFile.json"));
                         for (const hash of hashFile.hashes) {
