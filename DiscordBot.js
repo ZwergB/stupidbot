@@ -16,8 +16,10 @@ class DiscordBot {
         this.client.on('message', msg => {
 
             let prefix = "$";
-            const channelsFile= JSON.parse(fs.readFileSync("config/channels.json"));
-            const coursesFile= JSON.parse(fs.readFileSync("config/courses.json"));
+            const channelsFilePath = "config/channels.json";
+            const channelsFile= JSON.parse(fs.readFileSync(channelsFilePath));
+            const coursesFilePath = "config/courses.json"
+            const coursesFile= JSON.parse(fs.readFileSync(coursesFilePath));
             let respondContent = "";
 
             if (msg.content.startsWith(prefix)) {
@@ -25,7 +27,7 @@ class DiscordBot {
                 let content = msg.content.split(" "); //split in arguments
                 switch(true) {
                     case msg.content.startsWith(prefix + "help") || msg.content == prefix:
-                        msg.reply("List of commands: \n" +
+                        this.sendMessage(msg.channel.id,
                             "§ping -> should send back a Pong! \n" +
                             "§refresh -> forces the bot to refresh his files \n" +
                             "Channel Commands: \n" +
@@ -33,7 +35,8 @@ class DiscordBot {
                             "§addChannel/ach name id/this -> adds given channel \n" +
                             "§rmChannel/rmch id/this -> removes given channel \n" +
                             "File Commands: \n" +
-                            "§resend filename -> sends the file again !work in progress! \n"
+                            "§resend filename -> sends the file again !work in progress! \n",
+                            "List of commands:"
                         );
                         break; 
                     case msg.content.startsWith(prefix + "ping"):
@@ -41,19 +44,18 @@ class DiscordBot {
                         break; 
                     case msg.content.startsWith(prefix + "refresh"):
                         console.log("Testcycle started manually!");
-                        msg.reply("Testcycle started manually!");
+                        this.sendMessage(msg.channel.id, "Testcycle started manually!");
                         testCycle();
                         break;
 
                         //Channels
                     case msg.content.startsWith(prefix + "listChannels") || msg.content.startsWith(prefix + "lsch"):
-
-                        respondContent = "List of all channels: \n";
+                        respondContent = [[],[]];
                         for (const channel of channelsFile.channels) {
-                            respondContent += "Name: " + channel.name + " ID: " + channel.id + "\n";
+                            respondContent[0].push(channel.name);
+                            respondContent[1].push(channel.id);
                         }
-
-                        msg.reply(respondContent);
+                        this.sendList(msg.channel.id, "List of all Channels", respondContent)
                         break;
                     case msg.content.startsWith(prefix + "addChannel") || msg.content.startsWith(prefix + "ach"):
                             //Get the Channel ID if it should be the one the message was sent in.
@@ -63,9 +65,9 @@ class DiscordBot {
                             
                             //Adding the Channel to JSON File
                             channelsFile['channels'].push({"name":content[1],"id":content[2]});
-                            fs.writeFileSync(channelFilePath, JSON.stringify(channelsFile, false, 2));
+                            fs.writeFileSync(channelsFilePath, JSON.stringify(channelsFile, false, 2));
 
-                            msg.reply("Added Channel " + content[2] + " as " + content[1]);
+                            this.sendEditNote(msg.channel.id, "Added Channel " + content[2] + " as " + content[1], true);
                             console.log("Added Channel " + content[2] + " as " + content[1]);
                         break;
                     case msg.content.startsWith(prefix + "rmChannel") || msg.content.startsWith(prefix + "rmch"):
@@ -82,21 +84,21 @@ class DiscordBot {
                                     break;
                                 }
                             }
-                            fs.writeFileSync(channelFilePath, JSON.stringify(channelsFile, false, 2));
+                            fs.writeFileSync(channelsFilePath, JSON.stringify(channelsFile, false, 2));
 
-                            msg.reply("Removed Channel " + content[1] + " as " + content[2]);
+                            this.sendEditNote(msg.channel.id, "Removed Channel " + content[1] + " as " + content[2], false);
                             console.log("Removed Channel " + content[1] + " as " + content[2]);
                         break;
 
-                        //Couses
+                        //Courses
                         case msg.content.startsWith(prefix + "listCourses") || msg.content.startsWith(prefix + "lsco"):
-
-                            respondContent = "List of all courses: \n";
+                            respondContent = [[],[],[]];
                             for (const course of coursesFile.courses) {
-                                respondContent += "Name: " + course.name + " ID: " + course.id + " Prefix: " + course.prefix + "\n";
+                                respondContent[0].push(course.name);
+                                respondContent[1].push(course.id);
+                                respondContent[2].push(course.prefix);
                             }
-    
-                            msg.reply(respondContent);
+                            this.sendList(msg.channel.id, "List of all Courses", respondContent)
                             break;
 
                         //Files
@@ -126,6 +128,28 @@ class DiscordBot {
         console.log("Command by " + msg.author.username + " (" + msg.author + "): " + msg.content);
     }
 
+    sendEditNote(channelID, content, added) {
+        const embed = new Discord.MessageEmbed()
+            .setDescription(content)
+            .setColor("#ff0000");
+
+        if(added) embed.setColor("#00ff00");
+
+        this.client.channels.cache.get(channelID).send(embed);
+    }
+
+    sendList(channelID, title, content) {
+        const embed = new Discord.MessageEmbed()
+            .setColor('#555555')
+            .setTitle(title)
+            .addField('Name', content[0], true)
+            .addField('ID', content[1], true);
+
+        if(content.length == 3) embed.addField('Prefix', content[2], true);
+
+        this.client.channels.cache.get(channelID).send(embed);
+    }
+
     uploadFile(path, channelID, text = "") {
 
         if (fs.statSync(path).size < 800000) {
@@ -142,11 +166,16 @@ class DiscordBot {
 
     }
 
-    sendMessage(content, channelID) {
-        this.client.channels.cache.get(channelID).send(content);
+    sendMessage(channelID, content,  title = "") {
+        const embed = new Discord.MessageEmbed()
+            .setTitle(title)
+            .setDescription(content)
+            .setColor("#555555");
+
+        this.client.channels.cache.get(channelID).send(embed);
     }
 
-    sendAnnouncement(title, content) {
+    sendAnnouncement(channelID, title, content) {
         const embed = new Discord.MessageEmbed()
             .setColor('#0099ff')
             .setTitle(title)
