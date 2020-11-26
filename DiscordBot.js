@@ -19,7 +19,7 @@ class DiscordBot {
 
             const channelsFilePath  = "config/channels.json";
             const channelsFile      = JSON.parse(fs.readFileSync(channelsFilePath));
-            const coursesFilePath   = "config/courses.json"
+            const coursesFilePath   = "config/courses.json";
             const coursesFile       = JSON.parse(fs.readFileSync(coursesFilePath));
 
             let respondContent = "";
@@ -33,37 +33,42 @@ class DiscordBot {
                 let args = msg.content.split(" "); //split in arguments
                 switch(true) {
                     case msg.content == prefix + "help" || msg.content == prefix:
-                        this.sendList(msg.channel.id, "List of commands:", ["Command", "Description", "Shortcut"], [
+                        this.sendList(msg.channel.id, "List of commands:", ["Command", "Description", "Shortcut"], 
                             [
-                                ["§help"], 
-                                ["§ping"], 
-                                ["§refresh"], 
-                                ["§listChannels"], 
-                                ["§addChannel"], 
-                                ["§rmChannel"], 
-                                ["§listCourses"], 
-                                ["§resend"]
+                                [
+                                    "§help", 
+                                    "§ping", 
+                                    "§refresh", 
+                                    "§listChannels", 
+                                    "§addChannel name id/this", 
+                                    "§rmChannel id/this", 
+                                    "§listCourses", 
+                                    "§list name", 
+                                    "§resend filename"
+                                ],
+                                [
+                                    "helps you", 
+                                    "should send back a Pong!", 
+                                    "forces the bot to refresh his files", 
+                                    "lists all channels", 
+                                    "adds given channel", 
+                                    "removes given channel", 
+                                    "lists all courses", 
+                                    "lists all info to course", 
+                                    "sends the file again !work in progress!"
+                                ],
+                                [
+                                    "§", 
+                                    "", 
+                                    "", 
+                                    "§lsch", 
+                                    "§ach",
+                                    "§rmch", 
+                                    "§lsco", 
+                                    "§ls",
+                                    ""
+                                ]
                             ],
-                            [
-                                ["helps you"], 
-                                ["should send back a Pong!"], 
-                                ["forces the bot to refresh his files"], 
-                                ["lists all channels"], 
-                                ["adds given channel"], 
-                                ["removes given channel"], 
-                                ["lists all courses"], 
-                                ["sends the file again !work in progress!"]
-                            ],
-                            [
-                                ["§"], 
-                                [""], 
-                                [""], 
-                                ["§lsch"], 
-                                ["§ach"], 
-                                ["§rmch"], 
-                                ["§lsco"], 
-                                [""]
-                            ]],
                             /*"§ping -> should send back a Pong! \n" +
                             "§refresh -> forces the bot to refresh his files \n" +
                             "Channel Commands: \n" +
@@ -85,8 +90,9 @@ class DiscordBot {
                         break;
 
                         //Channels
-                    case msg.content.startsWith(prefix + "listChannels") || msg.content.startsWith(prefix + "lsch"):
+                    case msg.content == prefix + "listChannels" || msg.content == prefix + "lsch":
                         respondContent = [[],[]];
+                        //Rearrange array to fit the Discord Fields
                         for (const channel of channelsFile.channels) {
                             respondContent[0].push(channel.name);
                             respondContent[1].push(channel.id);
@@ -100,7 +106,7 @@ class DiscordBot {
                         }
                         
                         //Adding the Channel to JSON File
-                        channelsFile['channels'].push({"name":args[1],"id":args[2]});
+                        channelsFile['channels'].push({"name": args[1],"id": args[2]});
                         fs.writeFileSync(channelsFilePath, JSON.stringify(channelsFile, false, 2));
 
                         this.sendMessage(msg.channel.id, undefined, "Added Channel " + args[2] + " as " + args[1], addColor);
@@ -129,19 +135,45 @@ class DiscordBot {
                         //Courses
                     case msg.content.startsWith(prefix + "listCourses") || msg.content.startsWith(prefix + "lsco"):
                         respondContent = [[],[],[]];
+                        //Rearrange array to fit the Discord Fields
                         for (const course of coursesFile.courses) {
                             respondContent[0].push(course.name);
                             respondContent[1].push(course.id);
                             respondContent[2].push(course.prefix);
                         }
+
                         this.sendList(msg.channel.id, "List of all Courses", ["Name", "ID", "Prefix"], respondContent)
+                        break;
+                    case msg.content.startsWith(prefix + "addCourse ") || msg.content.startsWith(prefix + "aco "):                        
+                        //Adding the Channel to JSON File
+                        coursesFile['courses'].push({"name": args[1],"id": args[2], "prefix": args[3]});
+                        fs.writeFileSync(coursesFilePath, JSON.stringify(coursesFile, false, 2));
+
+                        this.sendMessage(msg.channel.id, undefined, "Added Course " + args[2] + " as " + args[1] + " with Prefix: " + args[3], addColor);
+                        console.log("Added Course " + args[2] + " as " + args[1] + " with Prefix: " + args[3]);
+                        break;
+                    case msg.content.startsWith(prefix + "rmCourse ") || msg.content.startsWith(prefix + "rmco "):                        
+                        //Searching and Removing the Course in the JSON File
+                        for (let i = 0; i < coursesFile.courses.length; i++) {
+                            if(coursesFile.courses[i].id == args[1]) {
+                                args.push(coursesFile.courses[i].name);
+                                coursesFile.courses.splice(i, 1);
+                                break;
+                            }
+                        }
+                        fs.writeFileSync(coursesFilePath, JSON.stringify(coursesFile, false, 2));
+
+                        this.sendMessage(msg.channel.id, undefined, "Removed Course " + args[2] + " as " + args[1] + " with Prefix: " + args[3], deleteColor);
+                        console.log("Removed Course " + args[2] + " as " + args[1] + " with Prefix: " + args[3]);
                         break;
 
                     case msg.content.startsWith(prefix + "list ") || msg.content.startsWith(prefix + "ls "):
                         respondContent = [["Channel", "Course", "Prefix"],[]];
+                        //Find corresponding course and channel
                         const course = coursesFile.courses.find((course) => course.name == args[1]);
                         const channel = channelsFile.channels.find((channel) => channel.name == args[1]);
                         
+                        //Rearrange array to fit the Discord Fields
                         respondContent[1][0] = channel.id;
                         respondContent[1][1] = course.id;
                         respondContent[1][2] = course.prefix;
