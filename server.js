@@ -15,8 +15,8 @@ studIpInterface = new StudIPInterface(serverConfig.url, credentials);
 (async function() {
     await discordBot.startBot()
 
-    //testCycle();
-    //setInterval(testCycle, 600000);
+    testCycle();
+    setInterval(testCycle, 600000);
 })();
 
 async function testCycle() {
