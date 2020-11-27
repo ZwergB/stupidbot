@@ -66,7 +66,7 @@ class DiscordBot {
 
             //let url = "https://elearning.uni-oldenburg.de/sendfile.php?force_download=1&type=0&file_id=" + "&file_name="; //hashfile?
 
-            //this.sendMessage(url, channelID);
+            //this.sendMessage(channelID, undefined, url);
         }
 
     }

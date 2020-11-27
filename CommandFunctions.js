@@ -15,8 +15,6 @@ class CommandFunctions {
         this.messageColor  = "#555555";
     }
 
-    
-
     help(msg) {
         const respond = [[], [], []];
         const commandsFile = JSON.parse(fs.readFileSync("./config/commands.json"));
@@ -39,7 +37,7 @@ class CommandFunctions {
     refresh(msg) {
         console.log("Testcycle started manually!");
         this.sendMessage(msg.channel.id, undefined, "Testcycle started manually!", this.messageColor);
-        testCycle();
+        this.testCycle();
     }
 
     listChannels(msg) {
@@ -50,7 +48,7 @@ class CommandFunctions {
             respondContent[0].push(channel.name);
             respondContent[1].push(channel.id);
         }
-        this.sendList(msg.channel.id, "List of all Channels", ["Name", "ID"], respondContent)
+        this.sendList(msg.channel.id, "List of all Channels", ["Name", "ID"], respondContent);
     }
 
     listCourses(msg) {
@@ -62,7 +60,7 @@ class CommandFunctions {
             respondContent[1].push(course.id);
             respondContent[2].push(course.prefix);
         }
-        this.sendList(msg.channel.id, "List of all Courses", ["Name", "ID", "Prefix"], respondContent)
+        this.sendList(msg.channel.id, "List of all Courses", ["Name", "ID", "Prefix"], respondContent);
     }
 
     list(msg) {
@@ -79,7 +77,7 @@ class CommandFunctions {
         respondContent[1][1] = course.id;
         respondContent[1][2] = course.prefix;
 
-        this.sendList(msg.channel.id, args[1], ["Element", "Value"], respondContent)
+        this.sendList(msg.channel.id, args[1], ["Element", "Value"], respondContent);
     }
 }
 module.exports = CommandFunctions;
