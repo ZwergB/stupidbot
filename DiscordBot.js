@@ -1,5 +1,6 @@
 const Discord           = require('discord.js');
 const fs                = require('fs');
+const { connect } = require('http2');
 const CommandFunctions  = require('./CommandFunctions');
 
 class DiscordBot {
@@ -18,11 +19,12 @@ class DiscordBot {
     
         this.client.on('message', msg => {
             if (msg.content.startsWith(this.commandsFile.prefix)) {
+                const messageCommand = msg.content.split(" ")[0]; //get command
 
                 this.botLog(msg);
 
                 for (const command of this.commandsFile.commands) {
-                    if ((msg.content.startsWith(this.commandsFile.prefix + command.command) || msg.content.startsWith(this.commandsFile.prefix + command.shortcut)) && command.function != "") {
+                    if ((messageCommand == this.commandsFile.prefix + command.command || command.shortcut != "" && messageCommand == this.commandsFile.prefix + command.shortcut) && command.function != "") {
                         this.cf[command.function](msg);
                         break;
                     }

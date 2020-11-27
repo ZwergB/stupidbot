@@ -1,4 +1,3 @@
-const Discord = require('discord.js');
 const fs = require('fs');
 
 class CommandFunctions { 
@@ -16,18 +15,20 @@ class CommandFunctions {
     }
 
     help(msg) {
-        const respond = [[], [], []];
+        const respondContent = [[], [], []];
         const commandsFile = JSON.parse(fs.readFileSync("./config/commands.json"));
 
         //Rearrange Array
         for (const command of commandsFile.commands) {
-            respond[0].push(commandsFile.prefix + command.command + " " + command.arguments);
-            respond[1].push(command.description);
-            if (command.shortcut != "") respond[2].push(commandsFile.prefix + command.shortcut);
-            else respond[2].push(" ");
+            if (command.function != "") {
+                respondContent[0].push(commandsFile.prefix + command.command + " " + command.arguments);
+                respondContent[1].push(command.description);
+                if (command.shortcut != "") respondContent[2].push(commandsFile.prefix + command.shortcut);
+                else respondContent[2].push(" ");
+            }
         }
 
-        this.sendList(msg.channel.id, "List of all ", ["Command", "Description", "Shortcut"], respond);
+        this.sendList(msg.channel.id, "List of all ", ["Command", "Description", "Shortcut"], respondContent);
     }
 
     ping(msg) {
@@ -65,19 +66,26 @@ class CommandFunctions {
 
     list(msg) {
         const args = msg.content.split(" ");
-        const respondContent = [["Channel", "Course", "Prefix"],[]];
-        //Find corresponding course and channel
-        const coursesFile = JSON.parse(fs.readFileSync("./config/courses.json"));
-        const channelsFile = JSON.parse(fs.readFileSync("./config/channels.json"));
-        const course = coursesFile.courses.find((course) => course.name == args[1]);
-        const channel = channelsFile.channels.find((channel) => channel.name == args[1]);
+        if (args[1]) {
+            args[1] = args[1].toUpperCase();
+            const respondContent = [["Channel", "Course", "Prefix"],[]];
+            //Find corresponding course and channel
+            const coursesFile = JSON.parse(fs.readFileSync("./config/courses.json"));
+            const channelsFile = JSON.parse(fs.readFileSync("./config/channels.json"));
+            const course = coursesFile.courses.find((course) => course.name == args[1]);
+            const channel = channelsFile.channels.find((channel) => channel.name == args[1]);
 
-        //Rearrange array to fit the Discord Fields
-        respondContent[1][0] = channel.id;
-        respondContent[1][1] = course.id;
-        respondContent[1][2] = course.prefix;
+            if (course && channel) {
+                //Rearrange array to fit the Discord Fields
+                respondContent[1][0] = channel.id;
+                respondContent[1][1] = course.id;
+                respondContent[1][2] = course.prefix;
 
-        this.sendList(msg.channel.id, args[1], ["Element", "Value"], respondContent);
+                this.sendList(msg.channel.id, args[1], ["Element", "Value"], respondContent);
+            } else {
+                this.sendMessage(msg.channel.id, undefined, args[1] + " not found!");
+            }
+        }  
     }
 }
 module.exports = CommandFunctions;

@@ -11,14 +11,14 @@
         "command": "ping",
         "arguments": "",
         "description": "should send back a Pong!",
-        "shortcut": "none",
+        "shortcut": "",
         "function": "ping"
     },
     {
         "command": "refresh",
         "arguments": "",
         "description": "forces the bot to refresh his files",
-        "shortcut": "none",
+        "shortcut": "",
         "function": "refresh"
     },
     {
@@ -74,7 +74,7 @@
         "command": "resend",
         "arguments": "",
         "description": "doesn´t work",
-        "shortcut": "none",
+        "shortcut": "",
         "function": ""
     }]    
 }
