@@ -54,11 +54,17 @@ class StudIPInterface {
             return [];
         }
         const hashFile = JSON.parse(fs.readFileSync(this.hashFile));
+        fileList = fileList.filter((file) => !hashFile.hashes.find((val) => val == getHash(file)));
 
-        fileList = fileList.filter((file) => !hashFile.hashes.find((val) => val == file.file_id));
-        fileList.map((file) => {hashFile.hashes.push(file.file_id)})
+        fileList.map((file) => {hashFile.hashes.push(getHash(file))});
+        hashFile.lastModified = Date.now();
+
         fs.writeFileSync(this.hashFile, JSON.stringify(hashFile, false, 2))
         return fileList;
+
+        function getHash(file) {
+            return file.file_id + file.chdate + file.name
+        }
     }
 
     async findFilesInCourse(fileName, courseId) {
