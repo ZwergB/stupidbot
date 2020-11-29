@@ -1,0 +1,80 @@
+{
+    "prefix": "$",
+    "commands":[{
+        "command": "help",
+        "arguments": "",
+        "description": "helps you",
+        "shortcut": "h",
+        "function": "help"
+    },
+    {
+        "command": "ping",
+        "arguments": "",
+        "description": "should send back a Pong!",
+        "shortcut": "",
+        "function": "ping"
+    },
+    {
+        "command": "refresh",
+        "arguments": "",
+        "description": "forces the bot to refresh his files",
+        "shortcut": "",
+        "function": "refresh"
+    },
+    {
+        "command": "listChannels",
+        "arguments": "",
+        "description": "lists all channel",
+        "shortcut": "lch",
+        "function": "listChannels"
+    },
+    {
+        "command": "addChannel",
+        "arguments": "name id/this",
+        "description": "adds given channel",
+        "shortcut": "ach",
+        "function": ""
+    },
+    {
+        "command": "rmChannel",
+        "arguments": "id/this",
+        "description": "removes given channel",
+        "shortcut": "rmch",
+        "function": ""
+    },
+    {
+        "command": "listCourses",
+        "arguments": "",
+        "description": "lists all courses",
+        "shortcut": "lco",
+        "function": "listCourses"
+    },
+    {
+        "command": "addCourse",
+        "arguments": "name id prefix",
+        "description": "adds given course",
+        "shortcut": "aco",
+        "function": ""
+    },
+    {
+        "command": "rmCourse",
+        "arguments": "id",
+        "description": "removes given course",
+        "shortcut": "rmco",
+        "function": ""
+    },
+    {
+        "command": "list",
+        "arguments": "name",
+        "description": "lists all info to course",
+        "shortcut": "ls",
+        "function": "list"
+    },
+    {
+        "command": "resend",
+        "arguments": "",
+        "description": "doesn´t work",
+        "shortcut": "",
+        "function": ""
+    }]    
+}
