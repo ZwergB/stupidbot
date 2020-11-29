@@ -9,11 +9,11 @@ const credentials  = require('./config/credentials')
 const channels = require('./config/channels.json').channels;
 const courses  = require('./config/courses.json').courses;
 
-discordBot      = new DiscordBot(botConfig);
+discordBot      = new DiscordBot(botConfig, testCycle);
 studIpInterface = new StudIPInterface(serverConfig.url, credentials);
 
 (async function() {
-    await discordBot.startBot(testCycle)
+    await discordBot.startBot()
 
     testCycle();
     setInterval(testCycle, 600000);

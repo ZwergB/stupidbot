@@ -1,59 +1,32 @@
-const Discord = require('discord.js')
-const fs = require('fs');
+const Discord           = require('discord.js');
+const fs                = require('fs');
+const CommandFunctions  = require('./CommandFunctions');
 
 class DiscordBot {
 
-    constructor(data = {token}) {
+    constructor(data = {token}, testCycle) {
         this.token = data.token;
         this.client = new Discord.Client();
+        this.commandsFile = JSON.parse(fs.readFileSync("./config/commands.json"));
+        this.cf = new CommandFunctions(this.client, this.sendMessage, this.sendList, testCycle);
     }
 
-    async startBot(testCycle) {
+    async startBot() {
         this.client.once('ready', () => {
             console.log('Stupid Bot is online');
         });
     
         this.client.on('message', msg => {
+            if (msg.content.startsWith(this.commandsFile.prefix)) {
+                const messageCommand = msg.content.split(" ")[0]; //get command
 
-            let prefix = "§";
-            let channelFilePath = "config/discordchannels.json";
+                this.botLog(msg);
 
-            if (msg.content.startsWith(prefix)) {
-                switch(true) {
-                    case msg.content.startsWith(prefix + "help"):
-                        msg.reply("List of commands: \n" +
-                            "§ping -> should send back a Pong! \n" +
-                            "§refresh -> forces the bot to refresh his files \n" +
-                            "§addChannel name id/this -> adds a channel to send into"
-                        );
-                        break; 
-                    case msg.content.startsWith(prefix + "ping"):
-                        msg.reply('Pong!');
-                        console.log("Pong!");
-                        break; 
-                    case msg.content.startsWith(prefix + "refresh"):
-                        console.log("Testcycle started manually!")
-                        msg.reply("Testcycle started manually!");
-                        testCycle();
+                for (const command of this.commandsFile.commands) {
+                    if ((messageCommand == this.commandsFile.prefix + command.command || command.shortcut != "" && messageCommand == this.commandsFile.prefix + command.shortcut) && command.function != "") {
+                        this.cf[command.function](msg);
                         break;
-                    case msg.content.startsWith(prefix + "addChannel"):
-                        let content = msg.content.split(" "); //split in arguments
-                        if (content.length == 3) {
-                            //Get the Channel ID if it should be the one the message was sent in.
-                            if (content[2] == "this") {
-                                content[2] = msg.channel.id;
-                            }
-                            
-                            //Adding the Channel to JSON File
-                            const channelFile = JSON.parse(fs.readFileSync(channelFilePath));
-                            channelFile['channels'].push({"name":content[1],"id":content[2]});
-                            console.log(channelFile);
-                            fs.writeFileSync(channelFilePath, JSON.stringify(channelFile, false, 2))
-
-                            msg.reply("Added Channel " + content[2] + " as " + content[1]);
-                            console.log("Added Channel " + content[2] + " as " + content[1]);
-                        }
-                        break;
+                    }
                 }
             }
         });
@@ -67,15 +40,45 @@ class DiscordBot {
         });
     }
 
-    uploadFile(path, channelID) {
+    botLog(msg) {
+        console.log("Command by " + msg.author.username + " (" + msg.author + "): " + msg.content);
+    }
+
+    sendList(channelID, title, header, content, color = "#555555") {
+        const embed = new Discord.MessageEmbed()
+            .setColor(color)
+            .setTitle(title);
+            
+        for (let i = 0; i < header.length; i++) {
+            embed.addField(header[i], content[i], true);
+        }
+
+        this.client.channels.cache.get(channelID).send(embed);
+    }
+
+    uploadFile(path, channelID, text = "") {
 
         if (fs.statSync(path).size < 800000) {
             const attachment = new Discord.MessageAttachment(path);
-            this.client.channels.cache.get(channelID).send(attachment);
+            this.client.channels.cache.get(channelID).send(text, attachment);
         } else {
             // Find some way to link to the file or create a dynamic link to the file
+            //https://elearning.uni-oldenburg.de/sendfile.php?force_download=1&type=0&file_id=c44f5355cca9068aad60edb9856009fd&file_name=ds-2020-ha06.pdf
+
+            //let url = "https://elearning.uni-oldenburg.de/sendfile.php?force_download=1&type=0&file_id=" + "&file_name="; //hashfile?
+
+            //this.sendMessage(channelID, undefined, url);
         }
 
+    }
+
+    sendMessage(channelID,  title = "", content, colorCode = "#555555") {
+        const embed = new Discord.MessageEmbed()
+            .setTitle(title)
+            .setDescription(content)
+            .setColor(colorCode);
+
+        this.client.channels.cache.get(channelID).send(embed);
     }
 }
 
