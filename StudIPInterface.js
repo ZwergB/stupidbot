@@ -85,6 +85,8 @@ class StudIPInterface {
         const files = await this.apiRequest('folder/' + folderId + '/files');
         
         const allFiles = [];
+
+        if(!files) return allFiles;
         for (const file in files.collection)
             allFiles.push(files.collection[file]);
 
@@ -114,6 +116,9 @@ class StudIPInterface {
                 'Authorization': 'Basic ' + Buffer.from(this.userData.name + ":" + this.userData.password).toString('base64')
             },
         })
+
+        if (!response.ok)
+            return ; 
 
         switch(type) {
             case 'text':
